@@ -66,13 +66,18 @@ Sub StockMarketAnalysis()
                 ' Calculate the quarterly change and percentage change
                 quarterlyChange = closePrice - openPrice
                 If openPrice <> 0 Then
-                    percentageChange = (quarterlyChange / openPrice)
+                    percentageChange = (quarterlyChange / openPrice) * 100  ' Convert to percentage
                 Else
                     percentageChange = 0
                 End If
 
                 ' Output the results
                 ws.Cells(outputRow, 9).Value = previousTicker
+                ws.Cells(outputRow, 10).Value = Round(quarterlyChange, 2)  ' Round to 2 decimal places
+                ws.Cells(outputRow, 11).Value = Round(percentageChange, 2)  ' Round and format as percentage
+                ws.Cells(outputRow, 12).Value = totalVolume
+
+                ' Apply conditional formatting for positive and negative changes
                 If quarterlyChange < 0 Then
                     ws.Cells(outputRow, 10).Interior.ColorIndex = 3 ' Red
                     ws.Cells(outputRow, 11).Interior.ColorIndex = 3 ' Red
@@ -83,9 +88,6 @@ Sub StockMarketAnalysis()
                     ws.Cells(outputRow, 10).Interior.ColorIndex = 2 ' White
                     ws.Cells(outputRow, 11).Interior.ColorIndex = 2 ' White
                 End If
-                ws.Cells(outputRow, 10).Value = quarterlyChange
-                ws.Cells(outputRow, 11).Value = percentageChange
-                ws.Cells(outputRow, 12).Value = totalVolume
 
                 ' Update the greatest values
                 If percentageChange > maxPercentIncrease Then
@@ -107,7 +109,7 @@ Sub StockMarketAnalysis()
                 ' Reset for the new ticker
                 previousTicker = ticker
                 openPrice = ws.Cells(currentRow, 3).Value
-                totalVolume = 0
+                totalVolume = 0  ' Reset totalVolume to zero for the new ticker
                 firstRow = currentRow
             End If
 
@@ -122,15 +124,15 @@ Sub StockMarketAnalysis()
         closePrice = ws.Cells(currentRow - 1, 6).Value
         quarterlyChange = closePrice - openPrice
         If openPrice <> 0 Then
-            percentageChange = (quarterlyChange / openPrice)
+            percentageChange = (quarterlyChange / openPrice) * 100  ' Convert to percentage
         Else
             percentageChange = 0
         End If
 
         ' Output the results for the last ticker
         ws.Cells(outputRow, 9).Value = previousTicker
-        ws.Cells(outputRow, 10).Value = quarterlyChange
-        ws.Cells(outputRow, 11).Value = percentageChange
+        ws.Cells(outputRow, 10).Value = Round(quarterlyChange, 2)
+        ws.Cells(outputRow, 11).Value = Round(percentageChange, 2)
         ws.Cells(outputRow, 12).Value = totalVolume
 
         ' Update the greatest values for the last ticker
@@ -159,8 +161,8 @@ Sub StockMarketAnalysis()
         .Cells(2, 16).Value = maxPercentIncreaseTicker
         .Cells(3, 16).Value = minPercentDecreaseTicker
         .Cells(4, 16).Value = maxVolumeTicker
-        .Cells(2, 17).Value = maxPercentIncrease
-        .Cells(3, 17).Value = minPercentDecrease
+        .Cells(2, 17).Value = Round(maxPercentIncrease, 2)  ' Round the output values
+        .Cells(3, 17).Value = Round(minPercentDecrease, 2)
         .Cells(4, 17).Value = maxVolume
     End With
 
@@ -168,4 +170,3 @@ Sub StockMarketAnalysis()
     MsgBox "Ticker stock data analysis is complete!"
 
 End Sub
-
